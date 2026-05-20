@@ -1,0 +1,111 @@
+# Cloud Build: build and deploy AMMS.API + AMMS.Web to Cloud Run.
+# Prefer the repo-root cloudbuild.yaml when using Git repository connection.
+# This file is equivalent; use dir: . if your trigger root is AMMS/ only.
+# Trigger substitutions (set in Cloud Build trigger UI):
+#   _REGION, _AR_REPO, _CLOUDSQL_INSTANCE, _API_SERVICE, _WEB_SERVICE,
+#   _RUN_SA, _SECRET_DB, _SECRET_JWT, _JWT_ISSUER, _JWT_AUDIENCE, _VPC_CONNECTOR (optional)
+substitutions:
+  _REGION: asia-south1
+  _AR_REPO: amms
+  _CLOUDSQL_INSTANCE: amms-sql
+  _API_SERVICE: amms-api
+  _WEB_SERVICE: amms-web
+  _RUN_SA: amms-run
+  _SECRET_DB: amms-db-connection
+  _SECRET_JWT: amms-jwt-key
+  _JWT_ISSUER: MVEAAPI
+  _JWT_AUDIENCE: YourAppUsers
+  _VPC_CONNECTOR: ""
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    id: build-api
+    args:
+      - build
+      - -f
+      - AMMS.API/Dockerfile
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_API_SERVICE}:$SHORT_SHA
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_API_SERVICE}:latest
+      - .
+    dir: AMMS
+
+  - name: gcr.io/cloud-builders/docker
+    id: build-web
+    args:
+      - build
+      - -f
+      - AMMS.Web/Dockerfile
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_WEB_SERVICE}:$SHORT_SHA
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_WEB_SERVICE}:latest
+      - .
+    dir: AMMS
+
+  - name: gcr.io/cloud-builders/docker
+    id: push-api
+    args:
+      - push
+      - --all-tags
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_API_SERVICE}
+    waitFor: [build-api]
+
+  - name: gcr.io/cloud-builders/docker
+    id: push-web
+    args:
+      - push
+      - --all-tags
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_WEB_SERVICE}
+    waitFor: [build-web]
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: deploy-api
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -e
+        ARGS=(
+          run deploy ${_API_SERVICE}
+          --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_API_SERVICE}:$SHORT_SHA
+          --region=${_REGION}
+          --platform=managed
+          --allow-unauthenticated
+          --port=8080
+          --add-cloudsql-instances=$PROJECT_ID:${_REGION}:${_CLOUDSQL_INSTANCE}
+          --set-secrets=ConnectionStrings__DefaultConnection=${_SECRET_DB}:latest,Jwt__Key=${_SECRET_JWT}:latest
+          --set-env-vars=Jwt__Issuer=${_JWT_ISSUER},Jwt__Audience=${_JWT_AUDIENCE},ASPNETCORE_ENVIRONMENT=Production
+          --min-instances=1
+          --service-account=${_RUN_SA}@$PROJECT_ID.iam.gserviceaccount.com
+          --startup-probe=initialDelaySeconds=10,timeoutSeconds=5,periodSeconds=10,failureThreshold=3,httpGet.path=/health,httpGet.port=8080
+        )
+        if [ -n "${_VPC_CONNECTOR}" ]; then
+          ARGS+=(--vpc-connector=${_VPC_CONNECTOR})
+        fi
+        gcloud "${ARGS[@]}"
+    waitFor: [push-api]
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: deploy-web
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_WEB_SERVICE}
+      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_WEB_SERVICE}:$SHORT_SHA
+      - --region=${_REGION}
+      - --platform=managed
+      - --allow-unauthenticated
+      - --port=8080
+      - --set-env-vars=ASPNETCORE_ENVIRONMENT=Production
+      - --service-account=${_RUN_SA}@$PROJECT_ID.iam.gserviceaccount.com
+    waitFor: [push-web, deploy-api]
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_API_SERVICE}:$SHORT_SHA
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_WEB_SERVICE}:$SHORT_SHA

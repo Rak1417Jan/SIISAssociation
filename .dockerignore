@@ -1,0 +1,11 @@
+**/bin/
+**/obj/
+**/.vs/
+**/*.user
+**/*.suo
+.git/
+.gitignore
+**/Import Schema Logs/
+deploy/.env
+*.md
+!AMMS.API/README.md

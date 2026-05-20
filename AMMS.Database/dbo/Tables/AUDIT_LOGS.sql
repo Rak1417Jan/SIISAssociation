@@ -1,0 +1,15 @@
+﻿CREATE TABLE [dbo].[AUDIT_LOGS] (
+    [AUDIT_ID]      INT            IDENTITY (1, 1) NOT NULL,
+    [USER_ID]       INT            NULL,
+    [ACTION]        NVARCHAR (200) NULL,
+    [ENTITY_NAME]   NVARCHAR (100) NULL,
+    [ENTITY_ID]     INT            NULL,
+    [ACTION_DATE]   DATETIME2 (7)  DEFAULT (getdate()) NULL,
+    [CREATED_DATE]  DATETIME2 (7)  DEFAULT (getdate()) NULL,
+    [CREATED_BY]    INT            NULL,
+    [MODIFIED_DATE] DATETIME2 (7)  NULL,
+    [MODIFIED_BY]   INT            NULL,
+    PRIMARY KEY CLUSTERED ([AUDIT_ID] ASC),
+    FOREIGN KEY ([USER_ID]) REFERENCES [dbo].[USERS] ([USER_ID])
+);
+

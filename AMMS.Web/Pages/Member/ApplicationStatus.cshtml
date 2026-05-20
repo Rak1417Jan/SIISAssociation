@@ -1,0 +1,52 @@
+@page
+@model AMMS.Web.Pages.Member.ApplicationStatusModel
+@{
+    Layout = "_MemberLayout";
+    ViewData["Title"] = "Application Status";
+    ViewData["ActiveMenu"] = "ApplicationStatus";
+}
+
+<div class="member-welcome">
+    <h2>Application Status</h2>
+    <p class="subtitle">Your application approval status</p>
+</div>
+
+<div class="member-panel">
+    <div class="member-panel-header">
+        <h3 class="member-panel-title">Status</h3>
+    </div>
+    <div class="member-panel-body">
+        @if (Model.Application == null)
+        {
+            <p class="text-muted">No application record found.</p>
+        }
+        else
+        {
+            <div class="member-info-row">
+                <span class="member-info-label">Status</span>
+                <span class="member-info-value">
+                    <span class="status-badge @(
+                        Model.Application.Status == AMMS.Web.Models.ApplicationStatus.Approved ? "status-approved" :
+                        Model.Application.Status == AMMS.Web.Models.ApplicationStatus.Rejected ? "status-unapproved" :
+                        "status-pending")">
+                        @Model.Application.Status.ToString()
+                    </span>
+                </span>
+            </div>
+            @if (Model.Application.Status == AMMS.Web.Models.ApplicationStatus.Rejected && !string.IsNullOrEmpty(Model.Application.DiscrepancyRemarks))
+            {
+                <div class="member-info-row mt-3">
+                    <span class="member-info-label">Discrepancy</span>
+                    <span class="member-info-value">@Model.Application.DiscrepancyRemarks</span>
+                </div>
+            }
+            @if (Model.Application.ReviewedAt.HasValue)
+            {
+                <div class="member-info-row">
+                    <span class="member-info-label">Reviewed On</span>
+                    <span class="member-info-value">@Model.Application.ReviewedAt.Value.ToString("dd-MMM-yyyy")</span>
+                </div>
+            }
+        }
+    </div>
+</div>

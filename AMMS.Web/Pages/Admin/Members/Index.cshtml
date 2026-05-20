@@ -1,0 +1,94 @@
+@page
+@model AMMS.Web.Pages.Admin.Members.IndexModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Members";
+    ViewData["ActiveMenu"] = "Members";
+}
+
+<div class="admin-welcome">
+    <h2>Members</h2>
+    <p class="subtitle">List of members with verification status</p>
+</div>
+
+<div class="admin-panel">
+    <div class="admin-panel-header">
+        <h3 class="admin-panel-title">Filters</h3>
+    </div>
+    <div class="admin-panel-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Status</label>
+                <select name="Status" class="form-select">
+                    <option value="">All</option>
+                    <option value="Pending">Unverified</option>
+                    <option value="Approved">Verified</option>
+                    <option value="Hold">Hold</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Creation Date From</label>
+                <input type="date" name="FromDate" value="@(Model.FromDate?.ToString("yyyy-MM-dd") ?? "")" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Creation Date To</label>
+                <input type="date" name="ToDate" value="@(Model.ToDate?.ToString("yyyy-MM-dd") ?? "")" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Firm Name</label>
+                <input type="text" name="FirmName" value="@Model.FirmName" class="form-control" placeholder="Firm name" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Search (name, mobile, email, Aadhar)</label>
+                <input type="text" name="Query" value="@Model.Query" class="form-control" placeholder="Type to search..." />
+            </div>
+            <div class="col-md-8 d-flex align-items-end justify-content-end">
+                <button type="submit" class="btn btn-primary me-2">Apply</button>
+                <a asp-page="./Index" class="btn btn-outline-secondary">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="admin-panel">
+    <div class="admin-panel-header">
+        <h3 class="admin-panel-title">Members (@Model.Members.Count)</h3>
+    </div>
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Member Name</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Firm Name</th>
+                    <th>Status</th>
+                    <th>Created On</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model.Members)
+                {
+                    <tr>
+                        <td>
+                            <a asp-page="/Admin/Members/Details" asp-route-id="@m.MemberId">
+                                @m.Name
+                            </a>
+                        </td>
+                        <td>@m.MobileNo</td>
+                        <td>@m.Email</td>
+                        <td>@m.FirmName</td>
+                        <td>
+                            <span class="status-badge @(m.StatusCss)">
+                                @m.StatusDisplay
+                            </span>
+                        </td>
+                        <td>@m.CreatedAt.ToString("dd-MMM-yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

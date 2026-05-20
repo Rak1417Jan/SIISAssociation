@@ -1,0 +1,131 @@
+@page "{id:int}"
+@model AMMS.Web.Pages.Admin.Members.DetailsModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Member Details";
+    ViewData["ActiveMenu"] = "Members";
+}
+
+<div class="admin-welcome">
+    <h2>Member Details</h2>
+    <p class="subtitle">@Model.Member?.Name</p>
+</div>
+
+@if (Model.Member == null)
+{
+    <div class="create-user-message error">Member not found.</div>
+}
+else
+{
+    <div class="admin-panel">
+        <div class="admin-panel-header">
+            <h3 class="admin-panel-title">Basic Information</h3>
+        </div>
+        <div class="admin-panel-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <strong>Name:</strong> @Model.Member.Name<br />
+                    <strong>Father Name:</strong> @Model.Member.FatherName<br />
+                    <strong>Mobile:</strong> @Model.Member.MobileNo<br />
+                    <strong>Email:</strong> @Model.Member.Email<br />
+                    <strong>Designation:</strong> @Model.Member.Designation<br />
+                    <strong>Education:</strong> @Model.Member.Education
+                </div>
+                <div class="col-md-6">
+                    <strong>Date of Birth:</strong> @Model.Member.DateOfBirth?.ToString("dd-MMM-yyyy")<br />
+                    <strong>Date of Anniversary:</strong> @Model.Member.DateOfAnniversary?.ToString("dd-MMM-yyyy")<br />
+                    <strong>Aadhar No:</strong> @Model.Member.AadharCardNo<br />
+                    <strong>Firm Name:</strong> @Model.Member.FirmName<br />
+                    <strong>Created On:</strong> @Model.Member.CreatedAt.ToString("dd-MMM-yyyy")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-panel">
+        <div class="admin-panel-header">
+            <h3 class="admin-panel-title">Uploaded Documents</h3>
+        </div>
+        <div class="admin-panel-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <strong>Photo:</strong><br />
+                    @if (!string.IsNullOrEmpty(Model.Member.PhotoFileName))
+                    {
+                        <a href="~/@Model.Member.PhotoFileName" target="_blank" class="btn btn-sm btn-outline-primary mt-1">Open</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Not uploaded</span>
+                    }
+                </div>
+                <div class="col-md-3">
+                    <strong>Lease Deed:</strong><br />
+                    @if (!string.IsNullOrEmpty(Model.Member.LeaseDeedFileName))
+                    {
+                        <a href="~/@Model.Member.LeaseDeedFileName" target="_blank" class="btn btn-sm btn-outline-primary mt-1">Open</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Not uploaded</span>
+                    }
+                </div>
+                <div class="col-md-3">
+                    <strong>Registration:</strong><br />
+                    @if (!string.IsNullOrEmpty(Model.Member.RegistrationFileName))
+                    {
+                        <a href="~/@Model.Member.RegistrationFileName" target="_blank" class="btn btn-sm btn-outline-primary mt-1">Open</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Not uploaded</span>
+                    }
+                </div>
+                <div class="col-md-3">
+                    <strong>GST Copy:</strong><br />
+                    @if (!string.IsNullOrEmpty(Model.Member.GstCopyFileName))
+                    {
+                        <a href="~/@Model.Member.GstCopyFileName" target="_blank" class="btn btn-sm btn-outline-primary mt-1">Open</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Not uploaded</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-panel">
+        <div class="admin-panel-header">
+            <h3 class="admin-panel-title">Verification</h3>
+        </div>
+        <div class="admin-panel-body">
+            <p>
+                <strong>Current Status:</strong>
+                <span class="status-badge @(Model.StatusCss)">
+                    @Model.StatusDisplay
+                </span>
+            </p>
+            @if (!string.IsNullOrEmpty(Model.ExistingComment))
+            {
+                <p><strong>Existing Comment:</strong> @Model.ExistingComment</p>
+            }
+
+            <form method="post">
+                <input type="hidden" asp-for="Id" />
+                <div class="create-user-field">
+                    <label asp-for="AdminComment">Comment / Discrepancy</label>
+                    <textarea asp-for="AdminComment" rows="3" class="create-user-input"></textarea>
+                </div>
+                <div class="create-user-actions">
+                    <button type="submit" asp-page-handler="Verify" class="btn-create-user-submit">Verify</button>
+                    <button type="submit" asp-page-handler="Hold" class="btn btn-secondary-link ms-2">Put on Hold</button>
+                    <button type="submit" asp-page-handler="Reject" class="btn btn-danger ms-2">Reject</button>
+                    <a asp-page="./Index" class="btn-cancel">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+

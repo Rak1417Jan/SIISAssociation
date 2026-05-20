@@ -1,0 +1,90 @@
+26/04/2026 11:10:14 AM	This log contains information about the import schema operation into project 'AMMS.Database' on computer 'YASH' by user 'YASH'.
+26/04/2026 11:10:14 AM	Import of database schema has started.
+26/04/2026 11:10:35 AM	Gathering database credentials
+26/04/2026 11:10:35 AM	Gathering database options
+26/04/2026 11:10:35 AM	Gathering generic database scoped configuration option
+26/04/2026 11:10:35 AM	Gathering users
+26/04/2026 11:10:35 AM	Gathering roles
+26/04/2026 11:10:35 AM	Gathering application roles
+26/04/2026 11:10:35 AM	Gathering role memberships
+26/04/2026 11:10:35 AM	Gathering filegroups
+26/04/2026 11:10:35 AM	Gathering full-text catalogs
+26/04/2026 11:10:35 AM	Gathering assemblies
+26/04/2026 11:10:35 AM	Gathering certificates
+26/04/2026 11:10:35 AM	Gathering asymmetric keys
+26/04/2026 11:10:35 AM	Gathering symmetric keys
+26/04/2026 11:10:35 AM	Gathering encrypted symmetric keys
+26/04/2026 11:10:35 AM	Gathering schemas
+26/04/2026 11:10:35 AM	Gathering XML schema collections
+26/04/2026 11:10:35 AM	Gathering user-defined data types
+26/04/2026 11:10:35 AM	Gathering user-defined types
+26/04/2026 11:10:35 AM	Gathering table types
+26/04/2026 11:10:35 AM	Gathering unique keys for table types
+26/04/2026 11:10:35 AM	Gathering primary keys for table types
+26/04/2026 11:10:36 AM	Gathering indexes for table types
+26/04/2026 11:10:36 AM	Gathering check constraints for table types
+26/04/2026 11:10:36 AM	Gathering default constraints for table types
+26/04/2026 11:10:36 AM	Gathering partition functions
+26/04/2026 11:10:36 AM	Gathering partition schemes
+26/04/2026 11:10:36 AM	Gathering functions
+26/04/2026 11:10:36 AM	Gathering encrypted functions
+26/04/2026 11:10:36 AM	Gathering aggregates
+26/04/2026 11:10:36 AM	Gathering procedures
+26/04/2026 11:10:36 AM	Gathering encrypted procedures
+26/04/2026 11:10:36 AM	Gathering tables
+26/04/2026 11:10:45 AM	Gathering primary keys
+26/04/2026 11:10:45 AM	Gathering unique constraints
+26/04/2026 11:10:45 AM	Gathering foreign keys
+26/04/2026 11:10:45 AM	Gathering default constraints
+26/04/2026 11:10:46 AM	Gathering check constraints
+26/04/2026 11:10:46 AM	Gathering views
+26/04/2026 11:10:46 AM	Gathering encrypted views
+26/04/2026 11:10:46 AM	Gathering indexes
+26/04/2026 11:10:46 AM	Gathering statistics
+26/04/2026 11:10:46 AM	Gathering full-text index stoplists
+26/04/2026 11:10:46 AM	Gathering search property lists
+26/04/2026 11:10:46 AM	Gathering search properties
+26/04/2026 11:10:46 AM	Gathering full-text indexes
+26/04/2026 11:10:46 AM	Gathering column store indexes
+26/04/2026 11:10:46 AM	Gathering spatial indexes
+26/04/2026 11:10:46 AM	Gathering XML indexes
+26/04/2026 11:10:46 AM	Gathering JSON indexes
+26/04/2026 11:10:46 AM	Gathering Selective XML indexes
+26/04/2026 11:10:46 AM	Gathering encrypted triggers
+26/04/2026 11:10:46 AM	Gathering triggers
+26/04/2026 11:10:46 AM	Gathering encrypted and clr ddl triggers
+26/04/2026 11:10:46 AM	Gathering ddl triggers
+26/04/2026 11:10:46 AM	Creating edge constraints
+26/04/2026 11:10:46 AM	Gathering synonyms
+26/04/2026 11:10:46 AM	Gathering defaults
+26/04/2026 11:10:46 AM	Gathering data constraint uddt bindings
+26/04/2026 11:10:46 AM	Gathering rules
+26/04/2026 11:10:46 AM	Gathering data constraint uddt bindings
+26/04/2026 11:10:46 AM	Gathering message types
+26/04/2026 11:10:46 AM	Gathering queues
+26/04/2026 11:10:46 AM	Gathering contracts
+26/04/2026 11:10:46 AM	Gathering services
+26/04/2026 11:10:46 AM	Gathering event notifications
+26/04/2026 11:10:46 AM	Gathering remote service bindings
+26/04/2026 11:10:46 AM	Gathering broker priorities
+26/04/2026 11:10:46 AM	Gathering signatures
+26/04/2026 11:10:46 AM	Gathering compression options
+26/04/2026 11:10:46 AM	Gathering sequence types
+26/04/2026 11:10:46 AM	Gathering security policies
+26/04/2026 11:10:46 AM	Gather column encryption keys
+26/04/2026 11:10:46 AM	Gathering column master keys
+26/04/2026 11:10:46 AM	Gathering external data sources
+26/04/2026 11:10:46 AM	Gathering external file formats
+26/04/2026 11:10:46 AM	Gathering external models
+26/04/2026 11:10:46 AM	Gathering external tables
+26/04/2026 11:10:46 AM	Gathering XML index compression options
+26/04/2026 11:10:46 AM	Gathering extended properties
+26/04/2026 11:10:46 AM	Gathering assemblies
+26/04/2026 11:10:46 AM	Gathering credentials
+26/04/2026 11:10:46 AM	Gathering logins
+26/04/2026 11:10:46 AM	Gathering server audits
+26/04/2026 11:10:47 AM	Scanning project for duplicate elements
+26/04/2026 11:10:48 AM	Finished duplicate element processing
+26/04/2026 11:10:48 AM	Finished importing database.
+26/04/2026 11:10:48 AM	A summary of the import was saved to the following location: D:\SunilWork\Projects\AMMS\AMMS.Database\Import Schema Logs\AMMS.Database_20260426054014.log
+26/04/2026 11:10:48 AM	Click Finish to continue...

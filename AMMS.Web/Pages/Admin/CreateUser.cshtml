@@ -1,0 +1,155 @@
+@page
+@model AMMS.Web.Pages.Admin.CreateUserModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Create User";
+    ViewData["ActiveMenu"] = "CreateUser";
+}
+
+<div class="admin-welcome">
+    <h2>Welcome, Admin!</h2>
+    <p class="subtitle">Admin Control Panel</p>
+</div>
+
+<div class="create-user-layout">
+    <div class="create-user-main">
+        <div class="admin-cards create-user-cards">
+            <div class="admin-card">
+                <div class="admin-card-icon red"><i class="fas fa-users"></i></div>
+                <div class="admin-card-body">
+                    <h3>Active Users</h3>
+                    <p class="value">5</p>
+                </div>
+            </div>
+            <div class="admin-card">
+                <div class="admin-card-icon orange"><i class="fas fa-lock"></i></div>
+                <div class="admin-card-body">
+                    <h3>Admin Login Attempts</h3>
+                    <p class="value">112</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-panel create-user-form-panel">
+            <div class="admin-panel-header">
+                <h3 class="admin-panel-title">Create User</h3>
+            </div>
+            <div class="create-user-form-wrap">
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="create-user-message success">@Model.SuccessMessage</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="create-user-message error">@Model.ErrorMessage</div>
+                }
+                <div asp-validation-summary="ModelOnly" class="create-user-message error"></div>
+
+                <form method="post" enctype="multipart/form-data" asp-page="/Admin/CreateUser">
+                    <div class="create-user-field">
+                        <label asp-for="Name">Name</label>
+                        <input asp-for="Name" type="text" placeholder="Name" class="create-user-input" />
+                        <span asp-validation-for="Name" class="create-user-field-error"></span>
+                    </div>
+                    <div class="create-user-field">
+                        <label asp-for="Email">Email / Username</label>
+                        <input asp-for="Email" type="text" placeholder="Email / Username" class="create-user-input" />
+                        <span asp-validation-for="Email" class="create-user-field-error"></span>
+                    </div>
+                    <div class="create-user-field">
+                        <label asp-for="Password">Password</label>
+                        <input asp-for="Password" placeholder="Password" class="create-user-input" />
+                        <span asp-validation-for="Password" class="create-user-field-error"></span>
+                    </div>
+
+                    <div class="create-user-field">
+                        <label>User Image</label>
+                        <div class="create-user-upload">
+                            <input asp-for="ProfileImage" type="file" accept="image/*" class="create-user-file-input" id="profileImage" />
+                            <label for="profileImage" class="create-user-file-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Choose image or drag here</span>
+                            </label>
+                            <span class="create-user-file-hint">Optional. Max 2 MB (JPG, PNG)</span>
+                        </div>
+                    </div>
+
+                    <div class="create-user-field create-user-roles">
+                        <label>Verification (Role)</label>
+                        <div class="create-user-role-list">
+                            @foreach (var role in CreateUserModel.RoleOptions)
+                            {
+                                <label class="create-user-role-option">
+                                    <input asp-for="Role" type="radio" value="@role" />
+                                    <span>@role</span>
+                                </label>
+                            }
+                        </div>
+                        <span asp-validation-for="Role" class="create-user-field-error"></span>
+                    </div>
+
+                    <div class="create-user-actions">
+                        <button type="submit" class="btn-create-user-submit">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="create-user-sidepanels">
+        <div class="admin-panel">
+            <div class="admin-panel-header">
+                <h3 class="admin-panel-title">User Management</h3>
+            </div>
+            <ul class="create-user-role-menu">
+                <li><i class="fas fa-user-shield"></i> Super Admin</li>
+                <li><i class="fas fa-user-cog"></i> Admin</li>
+                <li><i class="fas fa-user-check"></i> Verification Officer</li>
+                <li><i class="fas fa-calculator"></i> Finance / Account User</li>
+                <li><i class="fas fa-keyboard"></i> Data Entry Operator</li>
+            </ul>
+        </div>
+        <div class="admin-panel">
+            <div class="admin-panel-header">
+                <h3 class="admin-panel-title">User Activity Logs</h3>
+            </div>
+            <ul class="admin-activity-list">
+                <li class="admin-activity-item">
+                    <div class="admin-activity-avatar">M</div>
+                    <div class="admin-activity-body">
+                        <p class="name">Mukesh Shah</p>
+                        <p class="action">Logged in</p>
+                    </div>
+                    <span class="admin-activity-time">2 minutes ago</span>
+                </li>
+                <li class="admin-activity-item">
+                    <div class="admin-activity-avatar">P</div>
+                    <div class="admin-activity-body">
+                        <p class="name">Priya Desai</p>
+                        <p class="action">Deactivated by Admin</p>
+                    </div>
+                    <span class="admin-activity-time">5 hours ago</span>
+                </li>
+                <li class="admin-activity-item">
+                    <div class="admin-activity-avatar">R</div>
+                    <div class="admin-activity-body">
+                        <p class="name">Rajesh Kumar</p>
+                        <p class="action">Password reset by Admin</p>
+                    </div>
+                    <span class="admin-activity-time">1 day ago</span>
+                </li>
+                <li class="admin-activity-item">
+                    <div class="admin-activity-avatar">A</div>
+                    <div class="admin-activity-body">
+                        <p class="name">Anjali Patel</p>
+                        <p class="action">Reset her password</p>
+                    </div>
+                    <span class="admin-activity-time">2 days ago</span>
+                </li>
+            </ul>
+            <div class="admin-panel-footer">
+                <a asp-page="/Admin/Dashboard">View All Logs &gt;</a>
+            </div>
+        </div>
+    </div>
+</div>

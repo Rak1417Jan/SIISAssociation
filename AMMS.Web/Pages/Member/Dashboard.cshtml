@@ -1,0 +1,84 @@
+@page
+@model AMMS.Web.Pages.Member.DashboardModel
+@{
+    Layout = "_MemberLayout";
+    ViewData["Title"] = "Dashboard";
+    ViewData["ActiveMenu"] = "Dashboard";
+}
+
+<div class="member-welcome">
+    <h2>Welcome, @(Model.Member?.Name ?? "Member")!</h2>
+    <p class="subtitle">Your member dashboard</p>
+</div>
+
+<div class="member-cards">
+    <a asp-page="/Member/MyInfo" class="member-card text-decoration-none text-dark">
+        <div class="member-card-icon blue"><i class="fas fa-user"></i></div>
+        <div class="member-card-body">
+            <h3>My Information</h3>
+            <p class="value">View / Edit</p>
+        </div>
+    </a>
+    <a asp-page="/Member/MembershipPlan" class="member-card text-decoration-none text-dark">
+        <div class="member-card-icon green"><i class="fas fa-id-card"></i></div>
+        <div class="member-card-body">
+            <h3>Membership Plan</h3>
+            <p class="value">Yearly / Lifetime</p>
+        </div>
+    </a>
+    <a asp-page="/Member/PaymentHistory" class="member-card text-decoration-none text-dark">
+        <div class="member-card-icon orange"><i class="fas fa-history"></i></div>
+        <div class="member-card-body">
+            <h3>Payment History</h3>
+            <p class="value">Last payments</p>
+        </div>
+    </a>
+    <a asp-page="/Member/ApplicationStatus" class="member-card text-decoration-none text-dark">
+        <div class="member-card-icon blue"><i class="fas fa-clipboard-check"></i></div>
+        <div class="member-card-body">
+            <h3>Application Status</h3>
+            <p class="value">Approved / Unapproved</p>
+        </div>
+    </a>
+</div>
+
+<div class="member-panel">
+    <div class="member-panel-header">
+        <h3 class="member-panel-title">Quick Info</h3>
+    </div>
+    <div class="member-panel-body">
+        <div class="member-info-row">
+            <span class="member-info-label">Name</span>
+            <span class="member-info-value">@(Model.Member?.Name ?? "—")</span>
+        </div>
+        <div class="member-info-row">
+            <span class="member-info-label">Mobile</span>
+            <span class="member-info-value">@(Model.Member?.MobileNo ?? "—")</span>
+        </div>
+        <div class="member-info-row">
+            <span class="member-info-label">Email</span>
+            <span class="member-info-value">@(Model.Member?.Email ?? "—")</span>
+        </div>
+        @if (Model.LastPayment != null)
+        {
+            <div class="member-info-row">
+                <span class="member-info-label">Last Payment</span>
+                <span class="member-info-value">₹ @Model.LastPayment.TotalAmount.ToString("N2") on @Model.LastPayment.PaymentDate.ToString("dd-MMM-yyyy")</span>
+            </div>
+        }
+        @if (Model.ApplicationStatus != null)
+        {
+            <div class="member-info-row">
+                <span class="member-info-label">Application</span>
+                <span class="member-info-value">
+                    <span class="status-badge @(
+                        Model.ApplicationStatus.Status == AMMS.Web.Models.ApplicationStatus.Approved ? "status-approved" :
+                        Model.ApplicationStatus.Status == AMMS.Web.Models.ApplicationStatus.Rejected ? "status-unapproved" :
+                        "status-pending")">
+                        @Model.ApplicationStatus.Status.ToString()
+                    </span>
+                </span>
+            </div>
+        }
+    </div>
+</div>

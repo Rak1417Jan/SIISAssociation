@@ -1,0 +1,53 @@
+@page
+@model AMMS.Web.Pages.Member.MyInfoModel
+@{
+    Layout = "_MemberLayout";
+    ViewData["Title"] = "My Information";
+    ViewData["ActiveMenu"] = "MyInfo";
+}
+
+<div class="member-welcome">
+    <h2>My Information</h2>
+    <p class="subtitle">Your registration details</p>
+</div>
+
+<div class="member-panel">
+    <div class="member-panel-header">
+        <h3 class="member-panel-title">Registered Information</h3>
+    </div>
+    <div class="member-panel-body">
+        @if (Model.Member == null)
+        {
+            <p class="text-muted">No member data found.</p>
+        }
+        else
+        {
+            <div class="member-info-row"><span class="member-info-label">Name</span><span class="member-info-value">@Model.Member.Name</span></div>
+            <div class="member-info-row"><span class="member-info-label">Father Name</span><span class="member-info-value">@(Model.Member.FatherName ?? "—")</span></div>
+            <div class="member-info-row"><span class="member-info-label">Mobile No</span><span class="member-info-value">@Model.Member.MobileNo</span></div>
+            <div class="member-info-row"><span class="member-info-label">Email</span><span class="member-info-value">@(Model.Member.Email ?? "—")</span></div>
+            <div class="member-info-row"><span class="member-info-label">Designation</span><span class="member-info-value">@(Model.Member.Designation ?? "—")</span></div>
+            <div class="member-info-row"><span class="member-info-label">Education</span><span class="member-info-value">@(Model.Member.Education ?? "—")</span></div>
+            <div class="member-info-row"><span class="member-info-label">Date of Birth</span><span class="member-info-value">@(Model.Member.DateOfBirth?.ToString("dd-MMM-yyyy") ?? "—")</span></div>
+            <div class="member-info-row"><span class="member-info-label">Date of Anniversary</span><span class="member-info-value">@(Model.Member.DateOfAnniversary?.ToString("dd-MMM-yyyy") ?? "—")</span></div>
+            <div class="member-info-row"><span class="member-info-label">Aadhar Card No</span><span class="member-info-value">@(Model.Member.AadharCardNo ?? "—")</span></div>
+            <div class="member-info-row"><span class="member-info-label">Firm Name</span><span class="member-info-value">@(Model.Member.FirmName ?? "—")</span></div>
+            @if (!string.IsNullOrEmpty(Model.Member.PhotoFileName))
+            {
+                <div class="member-info-row"><span class="member-info-label">Photo</span><span class="member-info-value">@Model.Member.PhotoFileName</span></div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Member.LeaseDeedFileName))
+            {
+                <div class="member-info-row"><span class="member-info-label">Lease Deed</span><span class="member-info-value">@Model.Member.LeaseDeedFileName</span></div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Member.RegistrationFileName))
+            {
+                <div class="member-info-row"><span class="member-info-label">Registration</span><span class="member-info-value">@Model.Member.RegistrationFileName</span></div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Member.GstCopyFileName))
+            {
+                <div class="member-info-row"><span class="member-info-label">GST Copy</span><span class="member-info-value">@Model.Member.GstCopyFileName</span></div>
+            }
+        }
+    </div>
+</div>

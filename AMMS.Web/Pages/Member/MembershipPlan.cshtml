@@ -1,0 +1,60 @@
+@page
+@model AMMS.Web.Pages.Member.MembershipPlanModel
+@{
+    Layout = "_MemberLayout";
+    ViewData["Title"] = "Membership Plan";
+    ViewData["ActiveMenu"] = "MembershipPlan";
+}
+
+<div class="member-welcome">
+    <h2>Membership Plan</h2>
+    <p class="subtitle">Yearly and Lifetime plans</p>
+</div>
+
+<div class="member-panel">
+    <div class="member-panel-header">
+        <h3 class="member-panel-title">Your Membership(s)</h3>
+    </div>
+    <div class="member-panel-body">
+        @if (Model.Memberships == null || !Model.Memberships.Any())
+        {
+            <p class="text-muted">No membership record found.</p>
+        }
+        else
+        {
+            <table class="member-table">
+                <thead>
+                    <tr>
+                        <th>Plan</th>
+                        <th>Base Amount</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var m in Model.Memberships)
+                    {
+                        <tr>
+                            <td>@AMMS.Web.Models.MembershipPlanHelper.DisplayName(m.PlanType)</td>
+                            <td>₹ @m.BaseAmount.ToString("N2") + GST</td>
+                            <td>@m.StartDate.ToString("dd-MMM-yyyy")</td>
+                            <td>@(m.EndDate?.ToString("dd-MMM-yyyy") ?? "Lifetime")</td>
+                            <td><span class="status-badge @(m.IsActive ? "status-approved" : "status-inactive")">@(m.IsActive ? "Active" : "Inactive")</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+<div class="member-panel">
+    <div class="member-panel-header">
+        <h3 class="member-panel-title">Plan Details</h3>
+    </div>
+    <div class="member-panel-body">
+        <div class="member-info-row"><span class="member-info-label">Yearly</span><span class="member-info-value">₹ 1,000 + GST</span></div>
+        <div class="member-info-row"><span class="member-info-label">Lifetime</span><span class="member-info-value">₹ 11,000 + GST</span></div>
+    </div>
+</div>

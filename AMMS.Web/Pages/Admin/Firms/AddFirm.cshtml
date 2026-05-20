@@ -1,0 +1,122 @@
+@page
+@model AMMS.Web.Pages.Admin.Firms.AddFirmModel
+@using AMMS.Web.Models
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Add Firm";
+    ViewData["ActiveMenu"] = "Firms";
+}
+
+<div class="admin-welcome">
+    <h2>Welcome, Admin!</h2>
+    <p class="subtitle">Admin Control Panel - Add Firm</p>
+</div>
+
+<div class="admin-panel create-user-form-panel">
+    <div class="admin-panel-header">
+        <h3 class="admin-panel-title">Add Firm</h3>
+        <a asp-page="/Admin/Firms/Index" class="btn-add-user btn-secondary-link"><i class="fas fa-list"></i> Back to List</a>
+    </div>
+    <div class="create-user-form-wrap firm-form-wrap">
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="create-user-message error">@Model.ErrorMessage</div>
+        }
+        <div asp-validation-summary="ModelOnly" class="create-user-message error"></div>
+
+        <form method="post" enctype="multipart/form-data">
+            <div class="firm-form-grid">
+                <div class="create-user-field">
+                    <label asp-for="FirmCode">Firm Code</label>
+                    <input asp-for="FirmCode" class="create-user-input" placeholder="Firm Code" />
+                    <span asp-validation-for="FirmCode" class="create-user-field-error"></span>
+                </div>
+                <div class="create-user-field">
+                    <label asp-for="FirmName">Firm Name</label>
+                    <input asp-for="FirmName" class="create-user-input" placeholder="Firm Name" />
+                    <span asp-validation-for="FirmName" class="create-user-field-error"></span>
+                </div>
+                <div class="create-user-field">
+                    <label asp-for="Type">Type</label>
+                    <select asp-for="Type" class="create-user-input" asp-items="Model.TypeOptions"></select>
+                </div>
+                <div class="create-user-field">
+                    <label asp-for="DateOfEstablishment">Date of Establishment</label>
+                    <input asp-for="DateOfEstablishment" type="date" class="create-user-input" />
+                </div>
+                <div class="create-user-field">
+                    <label asp-for="GstNo">GST No.</label>
+                    <input asp-for="GstNo" class="create-user-input" placeholder="GST No." />
+                </div>
+                <div class="create-user-field">
+                    <label asp-for="RegNo">Reg No.</label>
+                    <input asp-for="RegNo" class="create-user-input" placeholder="Reg No." />
+                </div>
+            </div>
+            <div class="create-user-field">
+                <label asp-for="Address">Address</label>
+                <input asp-for="Address" class="create-user-input" placeholder="Address" />
+            </div>
+            <div class="create-user-field">
+                <label asp-for="OfficeAddress">Office Address</label>
+                <input asp-for="OfficeAddress" class="create-user-input" placeholder="Office Address" />
+            </div>
+            <div class="firm-form-grid">
+                <div class="create-user-field">
+                    <label asp-for="TelephoneNo">Telephone No.</label>
+                    <input asp-for="TelephoneNo" class="create-user-input" placeholder="Telephone No." />
+                </div>
+                <div class="create-user-field">
+                    <label asp-for="MobileNo">Mobile No.</label>
+                    <input asp-for="MobileNo" class="create-user-input" placeholder="Mobile No." />
+                </div>
+                <div class="create-user-field">
+                    <label asp-for="Email">Email</label>
+                    <input asp-for="Email" type="email" class="create-user-input" placeholder="Email" />
+                    <span asp-validation-for="Email" class="create-user-field-error"></span>
+                </div>
+                <div class="create-user-field">
+                    <label asp-for="Website">Website</label>
+                    <input asp-for="Website" type="url" class="create-user-input" placeholder="https://" />
+                    <span asp-validation-for="Website" class="create-user-field-error"></span>
+                </div>
+            </div>
+            <div class="create-user-field">
+                <label asp-for="Products">Products (comma separated)</label>
+                <input asp-for="Products" class="create-user-input" placeholder="e.g. Steel, Machinery, Tools" />
+            </div>
+
+            <!-- Document uploads (moved from Member/Register) - placed in a single row -->
+            <div class="firm-form-grid" style="align-items:start;">
+                <div class="create-user-field">
+                    <label>Lease Deed</label>
+                    <div class="member-upload">
+                        <input asp-for="LeaseDeedFile" type="file" accept=".pdf,image/*" class="member-file-input" id="leaseDeedFile" />
+                        <label for="leaseDeedFile" class="member-file-label"><i class="fas fa-file-pdf"></i> Lease Deed</label>
+                    </div>
+                </div>
+
+                <div class="create-user-field">
+                    <label>Registration</label>
+                    <div class="member-upload">
+                        <input asp-for="RegistrationFile" type="file" accept=".pdf,image/*" class="member-file-input" id="regFile" />
+                        <label for="regFile" class="member-file-label"><i class="fas fa-file"></i> Registration</label>
+                    </div>
+                </div>
+
+                <div class="create-user-field">
+                    <label>GST Copy</label>
+                    <div class="member-upload">
+                        <input asp-for="GstCopyFile" type="file" accept=".pdf,image/*" class="member-file-input" id="gstFile" />
+                        <label for="gstFile" class="member-file-label"><i class="fas fa-file-invoice"></i> GST Copy</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="create-user-actions">
+                <button type="submit" class="btn-create-user-submit">Save Firm</button>
+                <a asp-page="/Admin/Firms/Index" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

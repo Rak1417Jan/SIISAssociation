@@ -1,0 +1,47 @@
+@page
+@model AMMS.Web.Pages.Member.PlanSelectionModel
+@{
+    Layout = "_MemberLayout";
+    ViewData["Title"] = "Select Plan";
+    ViewData["ActiveMenu"] = "";
+}
+
+<div class="member-welcome">
+    <h2>Select Membership Plan</h2>
+    <p class="subtitle">Choose Yearly or Lifetime</p>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="member-message error">@Model.ErrorMessage</div>
+}
+
+<form method="post" asp-page="/Member/PlanSelection">
+    <div class="member-panel">
+        <div class="member-panel-header">
+            <h3 class="member-panel-title">Plans</h3>
+        </div>
+        <div class="member-panel-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="d-block border rounded p-3 cursor-pointer" style="cursor:pointer;">
+                        <input type="radio" asp-for="SelectedPlan" value="@((int)AMMS.Web.Models.MembershipPlanType.Yearly)" />
+                        <strong>Yearly</strong><br />
+                        <span class="text-muted">₹ 1,000 + GST</span>
+                    </label>
+                </div>
+                <div class="col-md-6">
+                    <label class="d-block border rounded p-3 cursor-pointer" style="cursor:pointer;">
+                        <input type="radio" asp-for="SelectedPlan" value="@((int)AMMS.Web.Models.MembershipPlanType.Lifetime)" />
+                        <strong>Lifetime</strong><br />
+                        <span class="text-muted">₹ 11,000 + GST</span>
+                    </label>
+                </div>
+            </div>
+            <div class="member-actions mt-3">
+                <button type="submit" class="member-btn member-btn-primary">Next</button>
+                <a asp-page="/Member/Dashboard" class="member-btn member-btn-close">Cancel</a>
+            </div>
+        </div>
+    </div>
+</form>

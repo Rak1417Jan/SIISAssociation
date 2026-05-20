@@ -1,0 +1,42 @@
+@page
+@model AMMS.Web.Pages.Member.PaymentModel
+@{
+    Layout = "_MemberLayout";
+    ViewData["Title"] = "Payment";
+    ViewData["ActiveMenu"] = "";
+}
+
+<div class="member-welcome">
+    <h2>Payment</h2>
+    <p class="subtitle">Review and confirm</p>
+</div>
+
+@if (Model.Member == null)
+{
+    <div class="member-message error">Invalid session. <a asp-page="/Member/Login">Login again</a>.</div>
+}
+else
+{
+    <div class="member-panel">
+        <div class="member-panel-header">
+            <h3 class="member-panel-title">Payment Summary</h3>
+        </div>
+        <div class="member-panel-body">
+            <div class="member-info-row"><span class="member-info-label">Firm Name</span><span class="member-info-value">@(Model.Member.FirmName ?? "—")</span></div>
+            <div class="member-info-row"><span class="member-info-label">Member Name</span><span class="member-info-value">@Model.Member.Name</span></div>
+            <div class="member-info-row"><span class="member-info-label">Plan</span><span class="member-info-value">@Model.PlanName</span></div>
+            <div class="member-info-row"><span class="member-info-label">Plan Amount</span><span class="member-info-value">₹ @Model.PlanAmount.ToString("N2")</span></div>
+            <div class="member-info-row"><span class="member-info-label">Platform Charges</span><span class="member-info-value">₹ @Model.PlatformCharges.ToString("N2")</span></div>
+            <div class="member-info-row"><span class="member-info-label">Sub Total</span><span class="member-info-value">₹ @Model.SubTotal.ToString("N2")</span></div>
+            <div class="member-info-row"><span class="member-info-label">GST (@Model.GstRate%)</span><span class="member-info-value">₹ @Model.GstAmount.ToString("N2")</span></div>
+            <div class="member-info-row"><span class="member-info-label"><strong>Total</strong></span><span class="member-info-value"><strong>₹ @Model.TotalAmount.ToString("N2")</strong></span></div>
+        </div>
+    </div>
+
+    <form method="post" asp-page="/Member/Payment">
+        <div class="member-actions">
+            <button type="submit" class="member-btn member-btn-primary">Confirm Payment</button>
+            <a asp-page="/Member/PlanSelection" class="member-btn member-btn-close">Back</a>
+        </div>
+    </form>
+}

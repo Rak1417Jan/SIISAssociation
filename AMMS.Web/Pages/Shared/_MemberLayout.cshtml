@@ -1,0 +1,76 @@
+@{
+    var activeMenu = ViewData["ActiveMenu"] as string ?? "";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TEST INDUSTRIES ASSOCIATION</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/member.css" asp-append-version="true" />
+</head>
+<body class="member-body">
+    <header class="member-header">
+        <div class="member-header-left">
+            <a asp-page="/Member/Dashboard" class="member-header-logo">VIA</a>
+            <div class="member-header-brand">
+                <h1>TEST Industries Association</h1>
+                <p class="tagline">Member Portal</p>
+            </div>
+        </div>
+        <div class="member-header-right">
+            <a asp-page="/Member/Dashboard" class="member-header-icon" aria-label="Home"><i class="fas fa-home"></i></a>
+            <div class="member-user-menu">
+                <div class="member-user-avatar">M</div>
+                <span class="member-user-name">Member</span>
+                <a asp-page="/Member/Login" class="member-logout-link" aria-label="Logout"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
+        </div>
+    </header>
+    <div class="member-wrapper">
+        <aside class="member-sidebar">
+            <div class="member-sidebar-brand">
+                <div class="member-sidebar-logo">VIA</div>
+                <div class="member-sidebar-title">Member Portal</div>
+            </div>
+            <nav class="member-sidebar-nav">
+                <a asp-page="/Member/Dashboard" class="member-nav-item @(activeMenu == "Dashboard" ? "active" : "")">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a asp-page="/Member/MyInfo" class="member-nav-item @(activeMenu == "MyInfo" ? "active" : "")">
+                    <i class="fas fa-user"></i>
+                    <span>My Information</span>
+                </a>
+                <a asp-page="/Member/MembershipPlan" class="member-nav-item @(activeMenu == "MembershipPlan" ? "active" : "")">
+                    <i class="fas fa-id-card"></i>
+                    <span>Membership Plan</span>
+                </a>
+                <a asp-page="/Member/PaymentHistory" class="member-nav-item @(activeMenu == "PaymentHistory" ? "active" : "")">
+                    <i class="fas fa-history"></i>
+                    <span>Payment History</span>
+                </a>
+                <a asp-page="/Member/ApplicationStatus" class="member-nav-item @(activeMenu == "ApplicationStatus" ? "active" : "")">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>Application Status</span>
+                </a>
+            </nav>
+            <div class="member-sidebar-footer">
+                <a asp-page="/Member/Login" class="member-sidebar-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+        <main class="member-main">
+            @RenderBody()
+        </main>
+    </div>
+    <footer class="member-footer">© 2026 TEST Industries Association</footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

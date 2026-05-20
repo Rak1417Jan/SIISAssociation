@@ -1,0 +1,17 @@
+CREATE PROCEDURE [dbo].[usp_Broadcast_Create]
+    @ClientId INT,
+    @Title NVARCHAR (500),
+    @Message NVARCHAR (MAX),
+    @Channel NVARCHAR (20),
+    @TargetFilter NVARCHAR (MAX) = NULL,
+    @ScheduledAt DATETIME2 (7) = NULL,
+    @CreatedBy INT = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO dbo.BROADCASTS (CLIENT_ID, TITLE, MESSAGE, CHANNEL, TARGET_FILTER, SCHEDULED_AT, CREATED_BY, RECIPIENT_COUNT, DELIVERED_COUNT, FAILED_COUNT, IS_DELETED, CREATED_DATE)
+    VALUES (@ClientId, @Title, @Message, @Channel, @TargetFilter, @ScheduledAt, @CreatedBy, 0, 0, 0, 0, SYSUTCDATETIME());
+
+    SELECT CAST(SCOPE_IDENTITY() AS INT);
+END

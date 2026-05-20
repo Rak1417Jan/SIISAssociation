@@ -1,0 +1,513 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-47a8-9b0c-1d2e3f4a5b6c",
+    "name": "AMMS API",
+    "description": "AMMS ASP.NET Core API — import environments from postman/environments. Run **Auth → Admin Login (seed)** first; test script saves `accessToken`, `refreshToken`, `clientId`, `userId` into the active environment.\n\n**Seed credentials (post-deploy):** `seed.admin` / `Pass@123`, `clientId` from `CLIENTS` where `CLIENT_CODE = SEED_DEMO` (default env `clientId` = 1).\n\n**Member** requests need a JWT with role **Member** and claim **MemberId** — use `memberAccessToken` if you have one.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://localhost:7166", "type": "string" },
+    { "key": "clientId", "value": "1", "type": "string" },
+    { "key": "accessToken", "value": "", "type": "string" },
+    { "key": "refreshToken", "value": "", "type": "string" },
+    { "key": "userId", "value": "1", "type": "string" },
+    { "key": "memberId", "value": "1", "type": "string" },
+    { "key": "firmId", "value": "1", "type": "string" },
+    { "key": "broadcastId", "value": "1", "type": "string" },
+    { "key": "staffUserId", "value": "2", "type": "string" },
+    { "key": "memberAccessToken", "value": "", "type": "string" },
+    { "key": "passwordResetToken", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobileNumber\": \"9876543210\"\n}"
+            },
+            "url": "{{baseUrl}}/otp/send",
+            "description": "Absolute route `/otp/send` (not under `/api/v1/auth`)."
+          }
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobileNumber\": \"9876543210\",\n  \"password\": \"\",\n  \"otp\": \"123456\",\n  \"useOtp\": true\n}"
+            },
+            "url": "{{baseUrl}}/otp/verify"
+          }
+        },
+        {
+          "name": "Admin Login (seed)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var j = pm.response.json();",
+                  "if (j.data && j.data.accessToken) {",
+                  "  pm.collectionVariables.set('accessToken', j.data.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', j.data.refreshToken || '');",
+                  "  pm.collectionVariables.set('clientId', String(j.data.clientId));",
+                  "  pm.collectionVariables.set('userId', String(j.data.userId));",
+                  "  try {",
+                  "    pm.environment.set('accessToken', j.data.accessToken);",
+                  "    pm.environment.set('refreshToken', j.data.refreshToken || '');",
+                  "    pm.environment.set('clientId', String(j.data.clientId));",
+                  "  } catch (e) {}",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": {{clientId}},\n  \"userName\": \"seed.admin\",\n  \"password\": \"Pass@123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/admin/login",
+            "description": "Adjust `clientId` in environment if not 1. Requires seeded user."
+          }
+        },
+        {
+          "name": "Admin password reset (no JWT)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": {{clientId}},\n  \"email\": \"seed.admin@example.com\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/admin/password-reset",
+            "description": "No Authorization header. Optional `username` instead of `email`. Response message is the same whether the account exists. In Development, the API logs the reset token — paste it into `passwordResetToken` for **Admin password change (token)**."
+          }
+        },
+        {
+          "name": "Admin password change (token, no JWT)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{passwordResetToken}}\",\n  \"newPassword\": \"Pass@123\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/admin/password-change",
+            "description": "No JWT. Set collection variable `passwordResetToken` to the opaque token from the reset flow (e.g. server logs in Development)."
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accessToken\": \"{{accessToken}}\",\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/refresh-token"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/auth/logout",
+            "description": "Absolute route `/auth/logout`. Denylists all JWTs for the staff user (`JTI = *`) and clears stored refresh tokens. Requires staff JWT with `UserId` claim."
+          }
+        },
+        {
+          "name": "Session (validate)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/auth/session",
+            "description": "Absolute route `/auth/session`. Returns `data` with userId, clientId, username, role, etc. from the current JWT. Fails if token is expired or denylisted."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Master",
+      "item": [
+        {
+          "name": "Get Master records",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 0,\n  \"parentId\": 0,\n  \"name\": \"states\",\n  \"value\": null,\n  \"createdAt\": \"2026-01-01T00:00:00Z\"\n}"
+            },
+            "url": "{{baseUrl}}/master",
+            "description": "Route depends on hosting; template route `/master`."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Legacy routes",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": {{clientId}},\n  \"userId\": 0,\n  \"userName\": \"demo.user\",\n  \"password\": \"Pass@123\",\n  \"fullName\": \"Demo User\",\n  \"email\": \"demo.user@example.com\",\n  \"mobileNumber\": \"9876500011\",\n  \"role\": 1\n}"
+            },
+            "url": "{{baseUrl}}/admin/staff",
+            "description": "Absolute `/admin/staff` — verify UserController routing in your deployment."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Dashboard",
+      "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+      "item": [
+        {
+          "name": "Dashboard summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/admin/dashboard"
+          }
+        },
+        {
+          "name": "Analytics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/admin/analytics?year=2026"
+          }
+        },
+        {
+          "name": "Pending queue",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/admin/pending-queue?page=1&pageSize=20"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Members",
+      "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+      "item": [
+        {
+          "name": "List members",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/admin/members?page=1&pageSize=20&search=&firmId=&planId=&status="
+          }
+        },
+        {
+          "name": "Member detail",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/admin/members/{{memberId}}"
+          }
+        },
+        {
+          "name": "Verify member",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Approved via Postman seed test.\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/members/{{memberId}}/verify"
+          }
+        },
+        {
+          "name": "Hold member",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Waiting for documents — minimum twenty chars required by API.\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/members/{{memberId}}/hold"
+          }
+        },
+        {
+          "name": "Reject member",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"feedback\": \"Application incomplete — reject sample from Postman.\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/members/{{memberId}}/reject"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Firms",
+      "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+      "item": [
+        {
+          "name": "List company types (lookup)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/master/company-types",
+            "description": "Returns dbo.COMPANY_TYPE rows. Use companyTypeId when creating/updating firms."
+          }
+        },
+        {
+          "name": "List firms",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/admin/firms?page=1&pageSize=20&search="
+          }
+        },
+        {
+          "name": "Firm detail",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/admin/firms/{{firmId}}"
+          }
+        },
+        {
+          "name": "Create firm",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Test Firm Pvt Ltd\",\n  \"companyTypeId\": 6,\n  \"companyCode\": \"PTF-POST-01\",\n  \"gstNo\": \"27AAAAA0000A1Z5\",\n  \"address\": \"Plot 21\",\n  \"city\": \"Mumbai\",\n  \"state\": \"Maharashtra\",\n  \"pinCode\": \"400001\",\n  \"dateOfEstablishment\": \"2018-06-15\",\n  \"regNo\": \"U12345MH2018PTC000001\",\n  \"telephoneNo\": \"022-40000000\",\n  \"mobile\": \"9876500022\",\n  \"website\": \"https://example.com\",\n  \"products\": \"Steel, aluminum components\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/firms"
+          }
+        },
+        {
+          "name": "Update firm",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Test Firm (updated)\",\n  \"companyTypeId\": 6,\n  \"companyCode\": \"PTF-POST-01\",\n  \"gstNo\": \"27AAAAA0000A1Z5\",\n  \"address\": \"Plot 21 Phase 2\",\n  \"city\": \"Mumbai\",\n  \"state\": \"Maharashtra\",\n  \"pinCode\": \"400001\",\n  \"dateOfEstablishment\": \"2018-06-15\",\n  \"regNo\": \"U12345MH2018PTC000001\",\n  \"telephoneNo\": \"022-40000001\",\n  \"mobile\": \"9876500023\",\n  \"website\": \"https://example.com\",\n  \"products\": \"Steel, aluminum, alloys\",\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/firms/{{firmId}}"
+          }
+        },
+        {
+          "name": "Soft delete firm",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/v1/admin/firms/{{firmId}}"
+          }
+        },
+        {
+          "name": "Link member to firm",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"memberId\": {{memberId}},\n  \"roleInFirm\": \"PARTNER\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/firms/{{firmId}}/members"
+          }
+        },
+        {
+          "name": "Unlink member from firm",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/v1/admin/firms/{{firmId}}/members/{{memberId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Staff",
+      "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+      "item": [
+        {
+          "name": "List staff",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/admin/staff"
+          }
+        },
+        {
+          "name": "Create staff",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var j = pm.response.json();",
+                  "if (!j.errorMessage && typeof j.data === 'number') {",
+                  "  pm.collectionVariables.set('staffUserId', String(j.data));",
+                  "  try { pm.environment.set('staffUserId', String(j.data)); } catch (e) {}",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"staff.postman\",\n  \"email\": \"staff.postman@example.com\",\n  \"fullName\": \"Staff Postman\",\n  \"mobileNo\": \"9876543210\",\n  \"roleIds\": [2],\n  \"password\": \"Pass@123\"\n}"
+            },
+            "description": "roleIds = ROLES.ROLE_ID values for this client (see Admin → List roles); one or more. Optional password uses PBKDF2. Success `data` is new user id.",
+            "url": "{{baseUrl}}/api/v1/admin/staff"
+          }
+        },
+        {
+          "name": "Update staff",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"staff.updated@example.com\",\n  \"fullName\": \"Staff Updated\",\n  \"mobileNo\": \"9876543211\",\n  \"roleIds\": [2],\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/staff/{{staffUserId}}"
+          }
+        },
+        {
+          "name": "Deactivate staff",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/v1/admin/staff/{{staffUserId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Roles",
+      "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+      "item": [
+        {
+          "name": "List roles",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/admin/roles"
+          }
+        },
+        {
+          "name": "Update role permissions (SuperAdmin)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"permissionIds\": [1, 2, 3]\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/roles/Admin",
+            "description": "Requires MinRole:SuperAdmin. Body lists PERMISSION_ID values (see dbo.PERMISSIONS). Replaces all role-permission rows for that role."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Broadcasts",
+      "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+      "item": [
+        {
+          "name": "List broadcasts",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/admin/broadcasts?page=1&pageSize=20"
+          }
+        },
+        {
+          "name": "Create broadcast",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Monthly newsletter\",\n  \"message\": \"Hello members — this is a Postman test broadcast.\",\n  \"channel\": \"EMAIL\",\n  \"targetFilterJson\": null,\n  \"scheduledAt\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/broadcasts"
+          }
+        },
+        {
+          "name": "Broadcast detail",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/admin/broadcasts/{{broadcastId}}"
+          }
+        },
+        {
+          "name": "Delete broadcast",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/v1/admin/broadcasts/{{broadcastId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Member - Notifications",
+      "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{memberAccessToken}}", "type": "string" }] },
+      "item": [
+        {
+          "name": "Get notifications",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/member/notifications",
+            "description": "JWT must include **MemberId** claim and role **Member**."
+          }
+        },
+        {
+          "name": "Mark notifications read",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notificationIds\": [1, 2]\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/member/notifications/read",
+            "description": "Omit body or use empty array to mark all read per repository logic."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Diagnostics",
+      "item": [
+        {
+          "name": "Swagger UI (Development)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/swagger",
+            "description": "Available when ASPNETCORE_ENVIRONMENT=Development."
+          }
+        }
+      ]
+    }
+  ]
+}

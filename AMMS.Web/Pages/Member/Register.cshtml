@@ -1,0 +1,191 @@
+@page
+@model AMMS.Web.Pages.Member.RegisterModel
+@{
+    Layout = "_MemberLayout";
+    ViewData["Title"] = "Registration";
+    ViewData["ActiveMenu"] = "";
+}
+<div class="member-welcome">
+    <h2>Member Registration</h2>
+    <p class="subtitle">Please enter your details</p>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="member-message success">@Model.SuccessMessage</div>
+}
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="member-message error">@Model.ErrorMessage</div>
+}
+<div asp-validation-summary="ModelOnly" class="member-message error"></div>
+
+<form method="post" enctype="multipart/form-data" asp-page="/Member/Register">
+
+    <!-- New Firm dropdown (static list, defaults to Yash Infotech) -->
+    <div class="member-panel">
+        <div class="member-panel-header">
+            <h3 class="member-panel-title">Firm</h3>
+        </div>
+        <div class="member-panel-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="member-field">
+                        <label asp-for="Firm">Firm</label>
+                        <select asp-for="Firm" class="member-input" id="firmSelect">
+                            <option value="">Select Firm</option>
+                            <option value="Yash Infotech">Yash Infotech</option>
+                            <option value="SIISLogic">SIISLogic</option>
+                        </select>
+                        <span asp-validation-for="Firm" class="member-field-error"></span>
+                    </div>
+                </div>
+
+                <!-- Total registered members (populated when firm selected) -->
+                <div class="col-md-6">
+                    <div class="member-field">
+                        <label>Total Registered Members</label>
+                        <input type="text" id="totalMembers" class="member-input" readonly value="" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="member-panel">
+        <div class="member-panel-header">
+            <h3 class="member-panel-title">Personal Details</h3>
+        </div>
+        <div class="member-panel-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="member-field">
+                        <label asp-for="Name">Name</label>
+                        <input asp-for="Name" class="member-input" placeholder="Full Name" />
+                        <span asp-validation-for="Name" class="member-field-error"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="member-field">
+                        <label asp-for="FatherName">Father Name</label>
+                        <input asp-for="FatherName" class="member-input" placeholder="Father's Name" />
+                        <span asp-validation-for="FatherName" class="member-field-error"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="member-field">
+                        <label asp-for="MobileNo">Mobile No</label>
+                        <input asp-for="MobileNo" class="member-input" placeholder="10-digit mobile" maxlength="10" />
+                        <span asp-validation-for="MobileNo" class="member-field-error"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="member-field">
+                        <label asp-for="Email">Email</label>
+                        <input asp-for="Email" class="member-input" type="email" placeholder="Email" />
+                        <span asp-validation-for="Email" class="member-field-error"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="member-field">
+                        <label asp-for="Designation">Designation</label>
+                        <input asp-for="Designation" class="member-input" placeholder="Designation" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="member-field">
+                        <label asp-for="Education">Education</label>
+                        <input asp-for="Education" class="member-input" placeholder="Education" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="member-field">
+                        <label asp-for="DateOfBirth">Date of Birth</label>
+                        <input asp-for="DateOfBirth" class="member-input" type="date" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="member-field">
+                        <label asp-for="DateOfAnniversary">Date of Anniversary</label>
+                        <input asp-for="DateOfAnniversary" class="member-input" type="date" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="member-field">
+                        <label asp-for="AadharCardNo">Aadhar Card No</label>
+                        <input asp-for="AadharCardNo" class="member-input" placeholder="Aadhar number"
+                               maxlength="14"
+                               pattern="^(\d{12}|\d{4}\s?\d{4}\s?\d{4})$"
+                               title="Enter 12 digits (optional spaces allowed like '1234 5678 9012')" />
+                        <span asp-validation-for="AadharCardNo" class="member-field-error"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="member-panel">
+        <div class="member-panel-header">
+            <h3 class="member-panel-title">Documents (Upload)</h3>
+        </div>
+        <div class="member-panel-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="member-field">
+                        <label>Photo</label>
+                        <div class="member-upload">
+                            <input asp-for="PhotoFile" type="file" accept="image/*" class="member-file-input" id="photoFile" />
+                            <label for="photoFile" class="member-file-label"><i class="fas fa-cloud-upload-alt"></i> Choose Photo</label>
+                            <span class="member-file-hint">Optional. JPG, PNG</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Lease Deed, Registration and GST Copy uploads moved to Admin/Firms/AddFirm page -->
+            </div>
+        </div>
+    </div>
+
+    <div class="member-panel-body member-actions">
+        <button type="submit" asp-page-handler="Save" class="member-btn member-btn-primary">Save</button>
+        <button type="submit" asp-page-handler="SaveAndContinue" class="member-btn member-btn-secondary">Save &amp; Continue</button>
+        <a asp-page="/Member/Login" class="member-btn member-btn-close">Close</a>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        (function () {
+            // static counts per firm for demo (numbers)
+            const counts = {
+                "": null,
+                "Yash Infotech": 3,
+                "SIISLogic": 2
+            };
+
+            const MAX_DISPLAY = 5; // maximum value to display
+            const select = document.getElementById('firmSelect');
+            const out = document.getElementById('totalMembers');
+
+            function update() {
+                const v = select.value || "";
+                const actual = counts[v];
+                if (actual == null || actual === "") {
+                    out.value = "";
+                    return;
+                }
+
+                // show the actual count up to MAX_DISPLAY; if higher, show capped value
+                const display = Math.min(actual, MAX_DISPLAY);
+                out.value = display.toString();
+            }
+
+            // initialize on DOM ready
+            document.addEventListener('DOMContentLoaded', function () {
+                update();
+            });
+
+            // update on change
+            select.addEventListener('change', update);
+        })();
+    </script>
+}

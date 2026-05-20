@@ -1,0 +1,54 @@
+@page
+@model AMMS.Web.Pages.Member.PaymentHistoryModel
+@{
+    Layout = "_MemberLayout";
+    ViewData["Title"] = "Payment History";
+    ViewData["ActiveMenu"] = "PaymentHistory";
+}
+
+<div class="member-welcome">
+    <h2>Payment History</h2>
+    <p class="subtitle">Last payment records</p>
+</div>
+
+<div class="member-panel">
+    <div class="member-panel-header">
+        <h3 class="member-panel-title">Payments</h3>
+    </div>
+    <div class="member-panel-body">
+        @if (Model.Payments == null || !Model.Payments.Any())
+        {
+            <p class="text-muted">No payment history found.</p>
+        }
+        else
+        {
+            <table class="member-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Plan Amount</th>
+                        <th>Platform Charges</th>
+                        <th>GST</th>
+                        <th>Total</th>
+                        <th>Reference</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model.Payments)
+                    {
+                        <tr>
+                            <td>@p.PaymentDate.ToString("dd-MMM-yyyy")</td>
+                            <td>₹ @p.PlanAmount.ToString("N2")</td>
+                            <td>₹ @p.PlatformCharges.ToString("N2")</td>
+                            <td>₹ @p.GstAmount.ToString("N2")</td>
+                            <td>₹ @p.TotalAmount.ToString("N2")</td>
+                            <td>@(p.TransactionRef ?? "—")</td>
+                            <td><span class="status-badge status-approved">@p.Status</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

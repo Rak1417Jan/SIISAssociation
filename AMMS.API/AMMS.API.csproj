@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="API\**" />
+    <Compile Remove="Application\**" />
+    <Compile Remove="Domain\**" />
+    <Compile Remove="Infrastructure\**" />
+    <Content Remove="API\**" />
+    <Content Remove="Application\**" />
+    <Content Remove="Domain\**" />
+    <Content Remove="Infrastructure\**" />
+    <EmbeddedResource Remove="API\**" />
+    <EmbeddedResource Remove="Application\**" />
+    <EmbeddedResource Remove="Domain\**" />
+    <EmbeddedResource Remove="Infrastructure\**" />
+    <None Remove="API\**" />
+    <None Remove="Application\**" />
+    <None Remove="Domain\**" />
+    <None Remove="Infrastructure\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.14" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AMMS.Services\AMMS.Services.csproj" />
+  </ItemGroup>
+
+</Project>

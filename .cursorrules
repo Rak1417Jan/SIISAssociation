@@ -1,0 +1,41 @@
+# Cursor Project Specification
+
+## Project Overview
+- Tech stack: ASP.NET Core Web API, SQL Server
+- Frontend: React + TypeScript
+- Database: SSDT project for schema management
+- Deployment: Azure DevOps pipelines
+
+## Coding Standards
+- Use PascalCase for class names and methods.
+- Use camelCase for variables and parameters.
+- Always prefer async/await over Task.Result.
+- Avoid `dynamic` and `var` unless type inference is obvious.
+- Use dependency injection for services.
+
+## API Guidelines
+- Follow REST conventions: GET, POST, PUT, DELETE.
+- Return standardized response objects with `status`, `message`, and `data`.
+- Use DTOs for request/response models.
+- Validate all inputs with FluentValidation.
+
+## Database Rules
+- All schema changes must be tracked in SSDT project.
+- Use `nvarchar` for text fields, avoid `varchar`.
+- Primary keys must be GUIDs unless performance requires integers.
+- Always include `CreatedDate` and `UpdatedDate` columns.
+
+## Security
+- Enforce JWT authentication for all APIs.
+- Use role-based authorization attributes.
+- Never log sensitive data (passwords, tokens).
+
+## Testing
+- Unit tests required for all services.
+- Integration tests for API endpoints.
+- Mock external dependencies.
+
+## Style Preferences
+- React components must be functional with hooks.
+- Use Tailwind CSS for styling.
+- TypeScript strict mode enabled.

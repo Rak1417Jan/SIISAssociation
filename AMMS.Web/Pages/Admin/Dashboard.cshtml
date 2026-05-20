@@ -1,0 +1,112 @@
+@page
+@model AMMS.Web.Pages.Admin.DashboardModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Admin Control Panel";
+    ViewData["ActiveMenu"] = "Dashboard";
+}
+
+<div class="admin-welcome">
+    <h2>Welcome, Admin!</h2>
+    <p class="subtitle">Admin Control Panel</p>
+</div>
+
+<div class="admin-cards">
+    <div class="admin-card">
+        <div class="admin-card-icon blue"><i class="fas fa-users"></i></div>
+        <div class="admin-card-body">
+            <h3>Total Users</h3>
+            <p class="value">@Model.TotalUsers</p>
+        </div>
+    </div>
+    <div class="admin-card">
+        <div class="admin-card-icon green"><i class="fas fa-user-check"></i></div>
+        <div class="admin-card-body">
+            <h3>Active Users</h3>
+            <p class="value">@Model.ActiveUsers</p>
+        </div>
+    </div>
+    <div class="admin-card">
+        <div class="admin-card-icon red"><i class="fas fa-user-times"></i></div>
+        <div class="admin-card-body">
+            <h3>Inactive Users</h3>
+            <p class="value">@Model.InactiveUsers</p>
+        </div>
+    </div>
+    <div class="admin-card">
+        <div class="admin-card-icon orange"><i class="fas fa-lock"></i></div>
+        <div class="admin-card-body">
+            <h3>Admin Login Attempts</h3>
+            <p class="value">@Model.AdminLoginAttempts</p>
+        </div>
+    </div>
+</div>
+
+<div class="admin-dashboard-grid">
+    <div class="admin-panel">
+        <div class="admin-panel-header">
+            <h3 class="admin-panel-title">User Management</h3>
+            <a asp-page="/Admin/CreateUser" class="btn-add-user"><i class="fas fa-plus"></i> Add New User</a>
+        </div>
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email / Username</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Last Login</th>
+                        <th style="width: 90px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr>
+                            <td>@user.Name</td>
+                            <td>@user.Email</td>
+                            <td>@user.Role</td>
+                            <td>
+                                <span class="status-badge @(user.IsActive ? "status-active" : "status-inactive")">
+                                    @(user.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                            <td>@user.LastLogin</td>
+                            <td>
+                                <div class="actions">
+                                    <a href="#" class="btn-icon" aria-label="Edit"><i class="fas fa-edit"></i></a>
+                                    <button type="button" class="btn-icon delete" aria-label="Delete"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="admin-panel-footer">
+            <a href="#">View All Users &gt;</a>
+        </div>
+    </div>
+    <div class="admin-panel">
+        <div class="admin-panel-header">
+            <h3 class="admin-panel-title">User Activity Logs</h3>
+        </div>
+        <ul class="admin-activity-list">
+            @foreach (var log in Model.ActivityLogs)
+            {
+                <li class="admin-activity-item">
+                    <div class="admin-activity-avatar">@(log.UserName.Length > 0 ? log.UserName[0].ToString().ToUpperInvariant() : "?")</div>
+                    <div class="admin-activity-body">
+                        <p class="name">@log.UserName</p>
+                        <p class="action">@log.Action</p>
+                    </div>
+                    <span class="admin-activity-time">@log.TimeAgo</span>
+                </li>
+            }
+        </ul>
+        <div class="admin-panel-footer">
+            <a href="#">View All Logs &gt;</a>
+        </div>
+    </div>
+</div>

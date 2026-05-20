@@ -1,0 +1,14 @@
+﻿CREATE TABLE [dbo].[LOGIN_HISTORY] (
+    [LOGIN_ID]      INT           IDENTITY (1, 1) NOT NULL,
+    [USER_ID]       INT           NOT NULL,
+    [LOGIN_TIME]    DATETIME2 (7) DEFAULT (getdate()) NULL,
+    [IP_ADDRESS]    NVARCHAR (50) NULL,
+    [IS_SUCCESS]    BIT           NULL,
+    [CREATED_DATE]  DATETIME2 (7) DEFAULT (getdate()) NULL,
+    [CREATED_BY]    INT           NULL,
+    [MODIFIED_DATE] DATETIME2 (7) NULL,
+    [MODIFIED_BY]   INT           NULL,
+    PRIMARY KEY CLUSTERED ([LOGIN_ID] ASC),
+    FOREIGN KEY ([USER_ID]) REFERENCES [dbo].[USERS] ([USER_ID])
+);
+

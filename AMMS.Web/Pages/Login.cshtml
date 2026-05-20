@@ -1,0 +1,100 @@
+@page
+@model AMMS.Web.Pages.LoginModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Super Admin Login";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TEST INDUSTRIES ASSOCIATION</title>
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+</head>
+<body class="login-page">
+    <div class="login-wrapper">
+        <aside class="login-sidebar">
+            <div class="login-sidebar-logo">
+                <span class="login-sidebar-logo-text">VIA</span>
+            </div>
+            <div class="login-sidebar-title">
+                <h1>TEST</h1>
+                <p>Industries Association</p>
+            </div>
+            <div class="login-sidebar-nav">
+                <a asp-page="/Index" class="login-sidebar-nav-btn" aria-label="Back">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                </a>
+            </div>
+        </aside>
+        <main class="login-main">
+            <div class="login-main-header">
+                <div class="login-main-header-logo">VIA</div>
+                <div class="login-main-header-text">
+                    <h2>TEST Industries Association</h2>
+                    <p class="tagline">Web-Based Member Management &amp; Communication System</p>
+                </div>
+            </div>
+            <div class="login-card">
+                <h3>Super Admin Login</h3>
+                <form method="post" asp-page="./Login" id="loginForm">
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="login-error" role="alert">@Model.ErrorMessage</div>
+                    }
+                    <div asp-validation-summary="ModelOnly" class="login-error" role="alert"></div>
+                    <div class="login-form-group">
+                        <div class="login-input-wrap">
+                            <span class="login-input-icon" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                    <polyline points="22,6 12,13 2,6"/>
+                                </svg>
+                            </span>
+                            <input asp-for="Username" type="text" placeholder="Email / Username" autocomplete="username" />
+                        </div>
+                        <span asp-validation-for="Username" class="login-field-error"></span>
+                    </div>
+                    <div class="login-form-group">
+                        <div class="login-input-wrap login-password-wrap">
+                            <span class="login-input-icon" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                            </span>
+                            <input asp-for="Password" id="loginPassword" placeholder="Password" autocomplete="current-password" />
+                            <button type="button" class="login-password-toggle" id="togglePassword" aria-label="Toggle password visibility">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password" class="login-field-error"></span>
+                    </div>
+                    <div class="login-remember">
+                        <input asp-for="RememberMe" type="checkbox" id="rememberMe" />
+                        <label for="rememberMe">Remember Me</label>
+                    </div>
+                    <button type="submit" class="login-btn">Secure Login</button>
+                    <a href="#" class="login-forgot">Forgot Password?</a>
+                    <a asp-page="/Member/Login" class="login-forgot d-block mt-2">Member Login (Mobile &amp; OTP)</a>
+                </form>
+                <div class="login-card-footer">© 2026 TEST Industries Association</div>
+            </div>
+        </main>
+    </div>
+    <footer class="login-page-footer">© 2026 TEST Industries Association</footer>
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            var input = document.getElementById('loginPassword');
+            var type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+        });
+    </script>
+</body>
+</html>

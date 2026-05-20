@@ -1,0 +1,77 @@
+@page
+@model AMMS.Web.Pages.Member.MemberLoginModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Member Login";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TEST INDUSTRIES ASSOCIATION</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/member.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+</head>
+<body class="member-login-page">
+    <div class="login-wrapper member-login-wrapper">
+        <aside class="login-sidebar member-login-sidebar">
+            <div class="login-sidebar-logo member-login-sidebar-logo">VIA</div>
+            <div class="login-sidebar-title member-login-sidebar-title">
+                <h1>TEST</h1>
+                <p>Industries Association</p>
+            </div>
+            <div class="login-sidebar-nav">
+                <a asp-page="/Index" class="login-sidebar-nav-btn" aria-label="Back">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </a>
+            </div>
+        </aside>
+        <main class="login-main member-login-main">
+            <div class="login-main-header">
+                <div class="login-main-header-logo">VIA</div>
+                <div class="login-main-header-text">
+                    <h2>TEST Industries Association</h2>
+                    <p class="tagline">Member Login</p>
+                </div>
+            </div>
+            <div class="login-card member-login-card">
+                <h3>Member Login</h3>
+                <form method="post" asp-page-handler="SendOtp" id="sendOtpForm">
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="login-error member-login-error" role="alert">@Model.ErrorMessage</div>
+                    }
+                    <div asp-validation-summary="ModelOnly" class="login-error" role="alert"></div>
+                    <div class="login-form-group member-login-form-group">
+                        <label asp-for="MobileNo">Mobile Number</label>
+                        <input asp-for="MobileNo" type="text" placeholder="Enter 10-digit mobile number" maxlength="10" autocomplete="tel" />
+                        <span asp-validation-for="MobileNo" class="login-field-error"></span>
+                    </div>
+                    <button type="submit" class="login-btn member-login-btn">Send OTP</button>
+                </form>
+
+                @if (Model.OtpSent)
+                {
+                    <div class="member-login-otp-section">
+                        <p class="text-muted small mb-2">OTP sent to @Model.MobileNo. Enter OTP below.</p>
+                        <form method="post" asp-page-handler="VerifyAndLogin">
+                            <input type="hidden" asp-for="MobileNo" />
+                            <div class="login-form-group member-login-form-group">
+                                <label asp-for="Otp">OTP</label>
+                                <input asp-for="Otp" type="text" placeholder="Enter OTP" maxlength="6" />
+                                <span asp-validation-for="Otp" class="login-field-error"></span>
+                            </div>
+                            <button type="submit" class="login-btn member-login-btn">Login</button>
+                        </form>
+                    </div>
+                }
+                <div class="login-card-footer">© 2026 TEST Industries Association</div>
+            </div>
+        </main>
+    </div>
+    <footer class="login-page-footer">© 2026 TEST Industries Association</footer>
+</body>
+</html>
