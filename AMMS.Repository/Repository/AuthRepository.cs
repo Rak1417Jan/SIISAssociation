@@ -243,8 +243,23 @@ namespace MVEA.Repository.Repository
                     };
                 }
 
+                if (user.PasswordHash is null || user.PasswordHash.Length == 0
+                    || user.PasswordSalt is null || user.PasswordSalt.Length == 0)
+                {
+                    _logger.LogWarning("User {Username} has missing password hash or salt.", username);
+                    return new ResponseModel<LoginResponse>()
+                    {
+                        ErrorMessage = "Invalid username or password.",
+                        ErrorId = -1
+                    };
+                }
+
                 // Verify password hash
-                bool isValid = CommandMethods.ValidatePassword(password, new CommandMethods.PasswordHashResult() { PasswordHash = user.PasswordHash!, PasswordSalt = user.PasswordSalt! });
+                bool isValid = CommandMethods.ValidatePassword(password, new CommandMethods.PasswordHashResult()
+                {
+                    PasswordHash = user.PasswordHash,
+                    PasswordSalt = user.PasswordSalt
+                });
                 if (!isValid)
                 {
                     _logger.LogInformation("Invalid password for Username={Username}.", username);

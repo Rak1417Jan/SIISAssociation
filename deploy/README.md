@@ -70,4 +70,4 @@ See [cloudbuild.yaml](../cloudbuild.yaml) for required substitution variables.
 
 ## Connection string on Cloud Run
 
-The API connects via the Cloud SQL connector at `127.0.0.1,1433`. The connection string is stored in Secret Manager (`amms-db-connection`) and injected as `ConnectionStrings__DefaultConnection`.
+On Cloud Run, the API connects to Cloud SQL **private IP** over a Serverless VPC Access connector (`.NET SqlClient` does not work with the `127.0.0.1` Cloud SQL sidecar for SQL Server). Run `./deploy/enable-cloudrun-private-sql.sh` once, then keep `VPC_CONNECTOR=amms-connector` in `.env`. The connection string is in Secret Manager (`amms-db-connection`).

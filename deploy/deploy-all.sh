@@ -44,7 +44,6 @@ API_DEPLOY_ARGS=(
   --platform=managed
   --allow-unauthenticated
   --port=8080
-  --add-cloudsql-instances="${CLOUDSQL_CONNECTION_NAME}"
   --set-secrets="ConnectionStrings__DefaultConnection=${SECRET_DB_CONNECTION}:latest,Jwt__Key=${SECRET_JWT_KEY}:latest"
   --set-env-vars="Jwt__Issuer=${JWT_ISSUER},Jwt__Audience=${JWT_AUDIENCE},ASPNETCORE_ENVIRONMENT=Production"
   --min-instances=1
@@ -52,7 +51,12 @@ API_DEPLOY_ARGS=(
 )
 
 if [ -n "${VPC_CONNECTOR:-}" ]; then
-  API_DEPLOY_ARGS+=(--vpc-connector="${VPC_CONNECTOR}")
+  API_DEPLOY_ARGS+=(
+    --vpc-connector="${VPC_CONNECTOR}"
+    --vpc-egress=private-ranges-only
+  )
+else
+  API_DEPLOY_ARGS+=(--add-cloudsql-instances="${CLOUDSQL_CONNECTION_NAME}")
 fi
 
 echo "==> Deploying ${API_SERVICE_NAME}"

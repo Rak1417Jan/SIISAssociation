@@ -15,7 +15,7 @@ substitutions:
   _SECRET_JWT: amms-jwt-key
   _JWT_ISSUER: MVEAAPI
   _JWT_AUDIENCE: YourAppUsers
-  _VPC_CONNECTOR: ""
+  _VPC_CONNECTOR: amms-connector
 
 options:
   logging: CLOUD_LOGGING_ONLY
@@ -75,15 +75,20 @@ steps:
           --platform=managed
           --allow-unauthenticated
           --port=8080
-          --add-cloudsql-instances=$PROJECT_ID:${_REGION}:${_CLOUDSQL_INSTANCE}
           --set-secrets=ConnectionStrings__DefaultConnection=${_SECRET_DB}:latest,Jwt__Key=${_SECRET_JWT}:latest
           --set-env-vars=Jwt__Issuer=${_JWT_ISSUER},Jwt__Audience=${_JWT_AUDIENCE},ASPNETCORE_ENVIRONMENT=Production
           --min-instances=1
           --service-account=${_RUN_SA}@$PROJECT_ID.iam.gserviceaccount.com
           --startup-probe=initialDelaySeconds=10,timeoutSeconds=5,periodSeconds=10,failureThreshold=3,httpGet.path=/health,httpGet.port=8080
         )
+        # .NET SqlClient needs private IP + VPC connector (not 127.0.0.1 Cloud SQL sidecar).
         if [ -n "${_VPC_CONNECTOR}" ]; then
-          ARGS+=(--vpc-connector=${_VPC_CONNECTOR})
+          ARGS+=(
+            --vpc-connector=${_VPC_CONNECTOR}
+            --vpc-egress=private-ranges-only
+          )
+        else
+          ARGS+=(--add-cloudsql-instances=$PROJECT_ID:${_REGION}:${_CLOUDSQL_INSTANCE})
         fi
         gcloud "${ARGS[@]}"
     waitFor: [push-api]

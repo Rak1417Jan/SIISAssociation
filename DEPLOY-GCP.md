@@ -185,7 +185,7 @@ gcloud builds submit . --config=cloudbuild.yaml --project=YOUR_PROJECT_ID
 | Issue | Fix |
 |-------|-----|
 | Cloud Build permission denied on deploy | Run `./deploy/setup-cloudbuild-iam.sh` |
-| API cannot connect to SQL | Check secret `amms-db-connection` uses `Server=127.0.0.1,1433;...` and `--add-cloudsql-instances` matches your instance |
+| API login: Connection refused on `127.0.0.1:1433` | .NET SqlClient cannot use Cloud Run's Cloud SQL sidecar for SQL Server. Run `./deploy/enable-cloudrun-private-sql.sh` (private IP + VPC connector `amms-connector`). Secret must use `Server=<private-ip>,1433;...` |
 | Build fails: project reference not found | Ensure trigger uses repo root config; build context must be `AMMS/` (see `dir: AMMS` in cloudbuild) |
 | JWT errors at runtime | Ensure `amms-jwt-key` secret exists and `_RUN_SA` has `secretAccessor` |
 | Background jobs stop | API uses `--min-instances=1`; increase if needed |

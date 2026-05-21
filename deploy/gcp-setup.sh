@@ -80,8 +80,8 @@ for ROLE in roles/cloudsql.client roles/secretmanager.secretAccessor; do
     --quiet >/dev/null
 done
 
-# Connection string for Cloud Run + Cloud SQL connector (loopback proxy)
-DB_CONN="Server=127.0.0.1,1433;Database=${SQL_DATABASE};User Id=${SQL_USER};Password=${SQL_PASSWORD};Encrypt=True;TrustServerCertificate=False;"
+# Placeholder secret; after setup run ./deploy/enable-cloudrun-private-sql.sh for private IP + VPC.
+DB_CONN="Server=127.0.0.1,1433;Database=${SQL_DATABASE};User Id=${SQL_USER};Password=${SQL_PASSWORD};Encrypt=True;TrustServerCertificate=True;"
 
 echo "==> Creating Secret Manager secrets"
 echo -n "${DB_CONN}" | gcloud secrets create "${SECRET_DB_CONNECTION}" \
@@ -105,4 +105,5 @@ echo ""
 echo "Next:"
 echo "  ./deploy/setup-cloudbuild-iam.sh"
 echo "  ./deploy/publish-database.sh"
+echo "  ./deploy/enable-cloudrun-private-sql.sh   # after first Cloud Run deploy"
 echo "  Connect Git repo + Cloud Build trigger (see DEPLOY-GCP.md)"
