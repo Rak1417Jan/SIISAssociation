@@ -9,8 +9,8 @@ This guide uses **Cloud Build connected to your Git repository** to build Docker
 | `amms-api` | `AMMS.API/Dockerfile` | Yes | REST API + background worker |
 | `amms-web` | `AMMS.Web/Dockerfile` | No | Razor Pages UI |
 
-Cloud Build config: **`cloudbuild.yaml`** at the **repository root** (`SIIS_Association/cloudbuild.yaml`).  
-Docker build context: **`AMMS/`** folder.
+Cloud Build config: **`cloudbuild.yaml`** at the **Git repository root** (next to `AMMS.API/`).  
+Docker build context: **repository root** (`.`).
 
 ---
 
@@ -80,7 +80,7 @@ Requires [SqlPackage](https://aka.ms/sqlpackage) and [Cloud SQL Auth Proxy](http
    - **Branch:** `^main$` (or your default branch)
    - **Configuration:** Cloud Build configuration file (YAML or JSON)
    - **Location:** Repository
-   - **Cloud Build config file:** `cloudbuild.yaml` (at repo root)
+   - **Cloud Build config file:** `cloudbuild.yaml` (at **repository root** — same folder as `AMMS.API/`, not a parent `SIIS_Association/` folder)
 6. Under **Substitution variables**, override defaults if needed:
 
    | Variable | Value |
@@ -145,13 +145,14 @@ gcloud run services describe amms-web --region=asia-south1 --format='value(statu
 ## Part 4 — Docker layout (for Cloud Build)
 
 ```
-SIIS_Association/          ← repo root (Cloud Build trigger points here)
-├── cloudbuild.yaml        ← build + deploy pipeline
-└── AMMS/                  ← Docker build context (dir: AMMS)
-    ├── AMMS.API/Dockerfile
-    ├── AMMS.Web/Dockerfile
-    └── .dockerignore
+GitHub repo root (SIISAssociation)   ← Cloud Build workspace /workspace
+├── cloudbuild.yaml
+├── AMMS.API/Dockerfile
+├── AMMS.Web/Dockerfile
+└── .dockerignore
 ```
+
+If your repo is the parent monorepo `SIIS_Association/` with an `AMMS/` subfolder, use the parent `cloudbuild.yaml` instead (it sets `dir: AMMS`).
 
 **API container** listens on port **8080** (`ASPNETCORE_URLS=http://+:8080`). Cloud Run is configured with `--port=8080`.
 

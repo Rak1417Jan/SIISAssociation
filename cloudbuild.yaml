@@ -1,6 +1,6 @@
 # Cloud Build: build and deploy AMMS.API + AMMS.Web to Cloud Run.
-# Prefer the repo-root cloudbuild.yaml when using Git repository connection.
-# This file is equivalent; use dir: . if your trigger root is AMMS/ only.
+# Use this file in your Cloud Build trigger (repo root = AMMS folder on GitHub).
+# Build context is the repository root (AMMS.API/, AMMS.Web/ live here — no AMMS/ prefix).
 # Trigger substitutions (set in Cloud Build trigger UI):
 #   _REGION, _AR_REPO, _CLOUDSQL_INSTANCE, _API_SERVICE, _WEB_SERVICE,
 #   _RUN_SA, _SECRET_DB, _SECRET_JWT, _JWT_ISSUER, _JWT_AUDIENCE, _VPC_CONNECTOR (optional)
@@ -32,7 +32,6 @@ steps:
       - -t
       - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_API_SERVICE}:latest
       - .
-    dir: AMMS
 
   - name: gcr.io/cloud-builders/docker
     id: build-web
@@ -45,7 +44,6 @@ steps:
       - -t
       - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_WEB_SERVICE}:latest
       - .
-    dir: AMMS
 
   - name: gcr.io/cloud-builders/docker
     id: push-api
