@@ -1,6 +1,7 @@
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using MVEA.Model.DTOs.Platform;
 using MVEA.Model.DTOs.Request;
 using MVEA.Model.DTOs.Response;
 using MVEA.Repository.Infrastructure;
@@ -170,6 +171,78 @@ public sealed class BroadcastRepository : IBroadcastRepository
         {
             _logger.LogError(ex, "ProcessDispatchAsync failed for {BroadcastId}.", broadcastId);
             return new ResponseModel<bool> { ErrorMessage = "Dispatch failed.", ErrorId = -1 };
+        }
+    }
+
+    public async Task<ResponseModel<bool>> ScheduleAsync(int clientId, int broadcastId, DateTime scheduledAt, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            IDbConnection connection = _connectionFactory.GetConnection();
+            const string sql = @"
+                UPDATE dbo.BROADCASTS
+                SET SCHEDULED_AT = @ScheduledAt, MODIFIED_DATE = SYSUTCDATETIME()
+                WHERE BROADCAST_ID = @BroadcastId AND CLIENT_ID = @ClientId AND ISNULL(IS_DELETED, 0) = 0 AND SENT_AT IS NULL";
+
+            int affected = await connection.ExecuteAsync(new CommandDefinition(
+                sql, new { BroadcastId = broadcastId, ClientId = clientId, ScheduledAt = scheduledAt }, cancellationToken: cancellationToken));
+
+            return affected > 0
+                ? new ResponseModel<bool> { Data = true }
+                : new ResponseModel<bool> { ErrorMessage = "Broadcast not found or already sent.", ErrorId = -1 };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "ScheduleAsync failed.");
+            return new ResponseModel<bool> { ErrorMessage = "Unable to schedule broadcast.", ErrorId = -1 };
+        }
+    }
+
+    public async Task<ResponseModel<bool>> CancelAsync(int clientId, int broadcastId, int modifiedBy, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            IDbConnection connection = _connectionFactory.GetConnection();
+            const string sql = @"
+                UPDATE dbo.BROADCASTS
+                SET IS_DELETED = 1, MODIFIED_DATE = SYSUTCDATETIME(), MODIFIED_BY = @ModifiedBy
+                WHERE BROADCAST_ID = @BroadcastId AND CLIENT_ID = @ClientId AND SENT_AT IS NULL";
+
+            int affected = await connection.ExecuteAsync(new CommandDefinition(
+                sql, new { BroadcastId = broadcastId, ClientId = clientId, ModifiedBy = modifiedBy }, cancellationToken: cancellationToken));
+
+            return new ResponseModel<bool> { Data = affected > 0 };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "CancelAsync failed.");
+            return new ResponseModel<bool> { ErrorMessage = "Unable to cancel broadcast.", ErrorId = -1 };
+        }
+    }
+
+    public async Task<ResponseModel<BroadcastStatsResponse>> GetStatsAsync(int clientId, int broadcastId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            IDbConnection connection = _connectionFactory.GetConnection();
+            const string sql = @"
+                SELECT BROADCAST_ID AS BroadcastId, ISNULL(RECIPIENT_COUNT, 0) AS RecipientCount,
+                       ISNULL(DELIVERED_COUNT, 0) AS DeliveredCount, ISNULL(FAILED_COUNT, 0) AS FailedCount,
+                       SENT_AT AS SentAt, SCHEDULED_AT AS ScheduledAt
+                FROM dbo.BROADCASTS
+                WHERE BROADCAST_ID = @BroadcastId AND CLIENT_ID = @ClientId AND ISNULL(IS_DELETED, 0) = 0";
+
+            BroadcastStatsResponse? row = await connection.QueryFirstOrDefaultAsync<BroadcastStatsResponse>(
+                new CommandDefinition(sql, new { BroadcastId = broadcastId, ClientId = clientId }, cancellationToken: cancellationToken));
+
+            return row == null
+                ? new ResponseModel<BroadcastStatsResponse> { ErrorMessage = "Broadcast not found.", ErrorId = -1 }
+                : new ResponseModel<BroadcastStatsResponse> { Data = row };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetStatsAsync failed.");
+            return new ResponseModel<BroadcastStatsResponse> { ErrorMessage = "Unable to load broadcast stats.", ErrorId = -1 };
         }
     }
 }

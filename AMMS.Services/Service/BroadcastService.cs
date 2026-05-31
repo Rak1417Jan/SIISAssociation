@@ -1,3 +1,4 @@
+using MVEA.Model.DTOs.Platform;
 using MVEA.Model.DTOs.Request;
 using MVEA.Model.DTOs.Response;
 using MVEA.Repository.IRepository;
@@ -68,4 +69,32 @@ public sealed class BroadcastService : IBroadcastService
     {
         return _broadcastRepository.SoftDeleteAsync(clientId, broadcastId, modifiedBy, cancellationToken);
     }
+
+    public async Task<ResponseModel<bool>> SendAsync(int clientId, int broadcastId, CancellationToken cancellationToken = default)
+    {
+        ResponseModel<BroadcastDetailResponse> detail = await _broadcastRepository.GetDetailAsync(clientId, broadcastId, cancellationToken);
+        if (!detail.Success)
+        {
+            return new ResponseModel<bool> { ErrorMessage = detail.ErrorMessage, ErrorId = detail.ErrorId };
+        }
+
+        await _dispatchQueue.EnqueueAsync(broadcastId, cancellationToken);
+        return new ResponseModel<bool> { Data = true };
+    }
+
+    public Task<ResponseModel<bool>> ScheduleAsync(int clientId, int broadcastId, DateTime scheduledAt, CancellationToken cancellationToken = default)
+    {
+        if (scheduledAt <= DateTime.UtcNow)
+        {
+            return Task.FromResult(new ResponseModel<bool> { ErrorMessage = "Scheduled time must be in the future.", ErrorId = -1 });
+        }
+
+        return _broadcastRepository.ScheduleAsync(clientId, broadcastId, scheduledAt, cancellationToken);
+    }
+
+    public Task<ResponseModel<bool>> CancelAsync(int clientId, int broadcastId, int modifiedBy, CancellationToken cancellationToken = default)
+        => _broadcastRepository.CancelAsync(clientId, broadcastId, modifiedBy, cancellationToken);
+
+    public Task<ResponseModel<BroadcastStatsResponse>> GetStatsAsync(int clientId, int broadcastId, CancellationToken cancellationToken = default)
+        => _broadcastRepository.GetStatsAsync(clientId, broadcastId, cancellationToken);
 }

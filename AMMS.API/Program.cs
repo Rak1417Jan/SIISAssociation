@@ -117,6 +117,17 @@ builder.Services.AddScoped<IMemberNotificationsRepository, MemberNotificationsRe
 builder.Services.AddScoped<IBroadcastService, BroadcastService>();
 builder.Services.AddScoped<IMemberNotificationsService, MemberNotificationsService>();
 
+builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
+builder.Services.AddScoped<IPlatformService, PlatformService>();
+builder.Services.AddScoped<IOutboundNotifier, LoggingOutboundNotifier>();
+builder.Services.AddScoped<AuditLogWriter>();
+
+builder.Services.AddHttpClient("Razorpay", client =>
+{
+    client.BaseAddress = new Uri("https://api.razorpay.com/v1/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
 Channel<int> broadcastChannel = Channel.CreateBounded<int>(new BoundedChannelOptions(500)
 {
     FullMode = BoundedChannelFullMode.Wait
@@ -148,6 +159,8 @@ if (!app.Environment.IsProduction())
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStaticFiles();
 
 app.MapControllers();
 app.MapHealthChecks("/health");
